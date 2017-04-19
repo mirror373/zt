@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			div{
+				width: 100px;
+				height: 100px;
+				background: red;
+				position: absolute;
+				left: 0;
+				top: 0;
+			}
+			#btn{
+				position: absolute;
+				right: 0;
+				top: 100px;
+				width: 100px;
+				height: 100px;
+			}
+			.div2{
+				width: 2px;
+				height: 2px;
+				background: #000;
+			}
+		</style>
+		<script type="text/javascript">
+			window.onload=function(){
+				var oDiv=document.getElementById('div1');
+				var arr=[];
+				var arr2=[];
+				oDiv.onmousedown=function(ev){
+					
+					var oEvent=ev||event;
+					var disX=oEvent.clientX-oDiv.offsetLeft;
+					var disY=oEvent.clientY-oDiv.offsetTop;
+					var oNewDiv1=document.createElement('p');
+					document.body.appendChild(oNewDiv1);
+					arr2.push(oNewDiv1)
+					
+					arr.push({
+						left:oDiv.offsetLeft,
+						top:oDiv.offsetTop
+					});
+					
+					document.onmousemove=function(ev){
+					
+						
+						var oEvent=ev||event;
+						var oLeft=oEvent.clientX-disX;
+						var oTop=oEvent.clientY-disY;
+						oLeft<=0  && (oLeft=0)
+						oTop<-0 && (oTop=0)
+						if(oLeft > document.documentElement.clientWidth-oDiv.offsetWidth)
+						{
+							oLeft=document.documentElement.clientWidth-oDiv.offsetWidth;
+						}
+						if(oTop > document.documentElement.clientHeight-oDiv.offsetHeight)
+						{
+							oTop=document.documentElement.clientHeight-oDiv.offsetHeight;
+						}
+						oDiv.style.left=oLeft+'px';
+						oDiv.style.top=oTop+'px';
+						
+						arr.push(
+							{
+								left:oLeft,
+								top:oTop
+							}
+						);
+							var oNewDiv=document.createElement('div');
+					oNewDiv.className='div2';
+					oNewDiv.style.left=oLeft+'px';
+					oNewDiv.style.top=oTop+'px';
+					document.body.appendChild(oNewDiv);
+					
+					arr2.push(oNewDiv);
+					}
+					document.onmouseup=function(){
+						document.onmousemove=null;
+						document.onmouseup=null;
+						oDiv.releaseCapture && oDiv.releaseCapture();
+						console.log(arr.length)
+					}
+					oDiv.setCapture && oDiv.setCapture();
+					return false;
+				}
+				var timer=null;
+			//点击回放
+			
+			var oBtn=document.getElementById('btn');
+				oBtn.onclick=function(){
+					
+					clearInterval(timer);
+					timer=setInterval(function(){
+						if(arr.length-1)
+						{
+						var oarr=arr2.pop();
+						
+						document.body.removeChild(oarr);
+						arr.pop();
+						oDiv.style.left=arr[arr.length-1].left+'px';
+						oDiv.style.top=arr[arr.length-1].top+'px';
+						}else{
+							clearInterval(timer);
+						}
+						
+						
+					},30)
+					console.log(arr.length)
+				}
+			
+			}
+		</script>
+	</head>
+	<body>
+		<div class="" id="div1">
+		
+		</div>
+		<input type="button" name="btn" id="btn" value="回放" />
+	</body>
+</html>
